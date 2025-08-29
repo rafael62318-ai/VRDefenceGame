@@ -1,175 +1,230 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq; // 정렬(OrderBy) 기능을 위해 추가합니다.
 
 public class TurretController : MonoBehaviour
 {
-    // 타겟팅 및 회전 관련 변수
-    public Transform lookAtObj; // 회전할 오브젝트
+    public enum TurretType { Basic, LongRange, ShortRange, Slow }
+    public enum TargetingType { Nearest, Random, LowestHP }
+
+    [Header("Turret Settings")]
+    public TurretType turretType = TurretType.Basic;
+    public TargetingType targetingType = TargetingType.Nearest;
+
+    [Header("Component References")]
+    public Transform lookAtObj;
+    public Transform shootElement;
+    
+    [Header("Game Logic")]
     public string targetTag = "Enemy";
     public float rotationSpeed = 5f;
-    public float range = 10f;
-    public Transform target; // 현재 타겟
-    private float homeY; // 초기 Y축 회전값
-
-    // 발사 관련 변수
     public GameObject projectilePrefab;
-    public Transform shootElement; // 발사 위치
+    
+    // 이 변수들은 이제 인스펙터에서 직접 수정할 수 있습니다.
+    public float range = 10f;
     public float fireRate = 1f;
-    private bool isShooting; // 발사 중인지 확인
-
-    // 추가 기능 관련 변수
-    public bool isCatcherType = false; // Catcher 타입 여부
-    public Animator anim; // 애니메이터 컴포넌트
     public int damage = 10;
+    public float abilityValue = 0f;
 
-    // 코루틴 딜레이 계산용
+    // TurretTrigger를 사용할지 여부를 결정하는 변수
+    [Header("Trigger Settings")]
+    public bool useTrigger = false;
+
+    private List<Transform> targets = new List<Transform>();
+    private float homeY;
+    private bool isShooting;
     private float shootDelay;
-
+    
     void Start()
     {
         if (lookAtObj != null)
             homeY = lookAtObj.localRotation.eulerAngles.y;
-
-        if (isCatcherType && anim == null)
-            anim = GetComponent<Animator>();
-
-        // 0으로 나눔 방지
+        
         shootDelay = 1f / Mathf.Max(0.0001f, fireRate);
     }
-
+    
     void Update()
     {
-        // 1) 타겟 탐색
-        FindTarget();
-
-        // 2) 타겟 있을 때
-        if (target != null)
+        // useTrigger가 false일 때만 스스로 타겟을 찾습니다.
+        if (!useTrigger)
         {
-            AimAtTarget();
+            FindTargets();
+        }
 
+        // 리스트에 있는 타겟 중 파괴된(null) 것을 자동으로 제거합니다.
+        targets.RemoveAll(item => item == null);
+
+        if (targets.Count > 0)
+        {
+            AimAtTarget(targets[0]); 
+            
             if (!isShooting)
             {
-                if (!isCatcherType)
-                    StartCoroutine(ShootCoroutine());
-                else
-                    StartCoroutine(CatcherAttackCoroutine());
+                StartCoroutine(ShootCoroutine());
             }
         }
-        // 3) 타겟 없을 때
         else
         {
+            isShooting = false;
             ReturnToHomeRotation();
         }
     }
 
-    void FindTarget()
+    // 외부(TurretTrigger)에서 타겟을 추가하는 함수
+    public void AddTarget(Transform newTarget)
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, range);
-        Transform closestTarget = null;
-        float closestDistance = Mathf.Infinity;
+        if (!targets.Contains(newTarget))
+        {
+            targets.Add(newTarget);
+            SortTargets(); // 새 타겟이 추가됐으니 우선순위에 따라 정렬
+        }
+    }
 
+    // 외부(TurretTrigger)에서 타겟을 제거하는 함수
+    public void RemoveTarget(Transform targetToRemove)
+    {
+        targets.Remove(targetToRemove);
+    }
+    
+    public Transform GetCurrentTarget()
+    {
+        if (targets.Count > 0)
+        {
+            return targets[0];
+        }
+        return null;
+    }
+
+    void FindTargets()
+    {
+        targets.Clear();
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, range);
         foreach (var hitCollider in hitColliders)
         {
             if (hitCollider.CompareTag(targetTag))
             {
-                float distance = Vector3.Distance(transform.position, hitCollider.transform.position);
-                if (distance < closestDistance)
-                {
-                    closestDistance = distance;
-                    closestTarget = hitCollider.transform;
-                }
+                targets.Add(hitCollider.transform);
             }
         }
-        target = closestTarget;
+        SortTargets(); // 타겟을 찾은 후 우선순위에 따라 정렬
     }
 
-    void AimAtTarget()
+    void SortTargets()
     {
-        if (lookAtObj == null || target == null) return;
+        switch (targetingType)
+        {
+            case TargetingType.Nearest:
+                targets = targets.OrderBy(t => Vector3.Distance(transform.position, t.position)).ToList();
+                break;
+            case TargetingType.LowestHP:
+                targets = targets.OrderBy(t => t.GetComponent<EnemyHealth>()?.GetCurrentHP() ?? int.MaxValue).ToList();
+                break;
+            case TargetingType.Random:
+                int n = targets.Count;
+                while (n > 1)
+                {
+                    n--;
+                    int k = Random.Range(0, n + 1);
+                    Transform value = targets[k];
+                    targets[k] = targets[n];
+                    targets[n] = value;
+                }
+                break;
+        }
+    }
 
-        Vector3 direction = target.position - lookAtObj.position;
+    public void SetTurretStats()
+    {
+        switch (turretType)
+        {
+            case TurretType.Basic:
+                range = 10f;
+                fireRate = 1f / 2f;
+                damage = 10;
+                break;
+            case TurretType.LongRange:
+                range = 15f;
+                fireRate = 1f / 3f;
+                damage = 6;
+                break;
+            case TurretType.ShortRange:
+                range = 8f;
+                fireRate = 1f / 3f;
+                damage = 15;
+                break;
+            case TurretType.Slow:
+                range = 10f;
+                fireRate = 1f / 10f;
+                damage = 2;
+                abilityValue = 0.5f;
+                break;
+        }
+    }
+    
+    int GetMaxTargets()
+    {
+        switch (turretType)
+        {
+            case TurretType.Basic:
+                return 1;
+            case TurretType.LongRange:
+            case TurretType.ShortRange:
+                return 3;
+            case TurretType.Slow:
+                return 3;
+        }
+        return 1;
+    }
+    
+    void AimAtTarget(Transform t)
+    {
+        if (lookAtObj == null || t == null) return;
+        Vector3 direction = t.position - lookAtObj.position;
         direction.y = 0;
         Quaternion lookRotation = Quaternion.LookRotation(direction);
         lookAtObj.rotation = Quaternion.Slerp(lookAtObj.rotation, lookRotation, Time.deltaTime * rotationSpeed);
     }
-
+    
     void ReturnToHomeRotation()
     {
         if (lookAtObj == null) return;
-
-        Quaternion home = Quaternion.Euler(
-            lookAtObj.localRotation.eulerAngles.x,
-            homeY,
-            lookAtObj.localRotation.eulerAngles.z
-        );
+        Quaternion home = Quaternion.Euler(lookAtObj.localRotation.eulerAngles.x, homeY, lookAtObj.localRotation.eulerAngles.z);
         lookAtObj.rotation = Quaternion.Slerp(lookAtObj.rotation, home, Time.deltaTime * rotationSpeed);
     }
-
-    // ★중복 제거·정리된 일반 발사 코루틴
+    
     IEnumerator ShootCoroutine()
     {
         isShooting = true;
-
-        while (target != null)
+        while (targets.Count > 0)
         {
-            // 총알 생성
-            if (projectilePrefab != null && shootElement != null)
-            {
-                GameObject newBullet = Instantiate(projectilePrefab, shootElement.position, shootElement.rotation);
+            AimAtTarget(targets[0]);
 
-                var bulletScript = newBullet.GetComponent<Projectile>();
-                if (bulletScript != null)
+            // 공격 시점에 타겟 리스트를 복사하여 안전하게 사용
+            List<Transform> currentTargets = new List<Transform>(targets);
+            int targetsToAttack = GetMaxTargets();
+            
+            for (int i = 0; i < Mathf.Min(targetsToAttack, currentTargets.Count); i++)
+            {
+                Transform t = currentTargets[i];
+                if (t != null && projectilePrefab != null && shootElement != null)
                 {
-                    bulletScript.target = target;
-                    bulletScript.damage = damage;
+                    GameObject newBullet = Instantiate(projectilePrefab, shootElement.position, shootElement.rotation);
+                    var projectileScript = newBullet.GetComponent<Projectile>();
+                    if (projectileScript != null)
+                    {
+                        projectileScript.damage = damage;
+                        projectileScript.slowAmount = (turretType == TurretType.Slow) ? abilityValue : 0;
+                        projectileScript.target = t;
+                    }
                 }
             }
-
+            
             yield return new WaitForSeconds(shootDelay);
         }
-
         isShooting = false;
     }
 
-    // Catcher 타입 공격 코루틴
-    IEnumerator CatcherAttackCoroutine()
-    {
-        isShooting = true;
-
-        while (target != null)
-        {
-            if (anim != null)
-            {
-                anim.SetBool("Attack", true);
-                // 현재 레이어 길이만큼 대기(애니메이션 길이 확보가 안되면 한 프레임 대기로 대체됨)
-                float wait = anim.GetCurrentAnimatorStateInfo(0).length;
-                if (wait <= 0f) wait = Time.deltaTime;
-                yield return new WaitForSeconds(wait);
-                anim.SetBool("Attack", false);
-            }
-
-            // 데미지 처리
-            if (target != null)
-            {
-                var enemyHp = target.GetComponent<EnemyHp>();
-                if (enemyHp != null)
-                    enemyHp.Dmg(damage);
-            }
-
-            yield return new WaitForSeconds(shootDelay);
-        }
-
-        isShooting = false;
-
-        // 초기 애니메이션 복귀
-        if (anim != null)
-        {
-            anim.SetBool("Attack", false);
-            anim.SetBool("T_pose", true);
-        }
-    }
-
-    // 개발 편의를 위한 시각화
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;

@@ -12,7 +12,7 @@ public class TurretSelector : MonoBehaviour
 
     void OnMouseDown()
     {
-        var ui = FindObjectOfType<TurretUIController>();
+        var ui = FindFirstObjectByType<TurretUIController>();
         if (ui != null && upgradeable != null)
         {
             ui.SelectTurret(upgradeable);
