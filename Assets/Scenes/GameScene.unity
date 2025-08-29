@@ -1395,6 +1395,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd3a9c1e189e04b4392fb1278ffa38e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  waves:
+  - enemyGroups: []
+    spawnRate: 0
+  - enemyGroups: []
+    spawnRate: 0
+  spawnPoints: []
+  waypoints: []
+  timeUntilNextWave: 15
+  goldBonusPerSecond: 1
 --- !u!1001 &3502814524840993617
 PrefabInstance:
   m_ObjectHideFlags: 0
