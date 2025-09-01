@@ -6,32 +6,36 @@ public class Enemy : MonoBehaviour
     public float moveSpeed = 5f;
 
     // 외부(WaveSpawn)에서 웨이포인트 배열을 받을 변수
+    [HideInInspector]
     public Transform[] waypoints;
 
     // 현재 목표 웨이포인트의 인덱스
     private int currentWaypointIndex = 0;
 
-    void Start()
+    void Setup(Transform[] newWaypoints)
     {
+        waypoints = newWaypoints;
+        currentWaypointIndex = 0;
+
         if (waypoints == null || waypoints.Length == 0)
         {
             Debug.LogError("웨이포인트가 할당되지 않았습니다!", this.gameObject);
+            enabled = false;
             return;
         }
         // 시작 위치를 첫 웨이포인트로 설정하고 다음 지점을 바라봅니다.
-        transform.position = waypoints[0].position; 
-        LookAtNextWaypoint();
+        transform.position = waypoints[0].position;
+        if (waypoints.Length > 1)
+        {
+            transform.LookAt(waypoints[1]);
+        }
     }
 
     void Update()
     {
         // 마지막 웨이포인트에 도달하면 소멸
-        if (currentWaypointIndex >= waypoints.Length)
-        {
-            ReachDestination();
-            return;
-        }
-        
+        if (waypoints == null || currentWaypointIndex >= waypoints.Length) return;
+
         // 목표 웨이포인트를 향해 이동
         transform.position = Vector3.MoveTowards(transform.position, waypoints[currentWaypointIndex].position, moveSpeed * Time.deltaTime);
 
@@ -39,7 +43,10 @@ public class Enemy : MonoBehaviour
         if (Vector3.Distance(transform.position, waypoints[currentWaypointIndex].position) < 0.1f)
         {
             currentWaypointIndex++;
-            LookAtNextWaypoint();
+            if (currentWaypointIndex < waypoints.Length)
+            {
+                transform.LookAt(waypoints[currentWaypointIndex]);
+            }
         }
     }
 
