@@ -356,7 +356,6 @@ GameObject:
   - component: {fileID: 4632330705030417213}
   - component: {fileID: -1713700750425847508}
   - component: {fileID: -1919582630795994757}
-  - component: {fileID: -7236717819081845242}
   m_Layer: 0
   m_Name: Turret1
   m_TagString: Untagged
@@ -553,26 +552,3 @@ MonoBehaviour:
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
   m_FarAttachMode: 0
---- !u!114 &-7236717819081845242
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7351957018225663698}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf59629f729e07f4f8912515b3dc2b43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lookAtObj: {fileID: 0}
-  targetTag: Enemy
-  rotationSpeed: 5
-  range: 10
-  target: {fileID: 0}
-  projectilePrefab: {fileID: 0}
-  shootElement: {fileID: 0}
-  fireRate: 1
-  isCatcherType: 0
-  anim: {fileID: 0}
-  damage: 10

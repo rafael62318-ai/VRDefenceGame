@@ -1,98 +1,87 @@
 using UnityEngine;
-using UnityEngine.InputSystem; // »õ·Î¿î À¯´ÏÆ¼ ÀÔ·Â ½Ã½ºÅÛÀ» »ç¿ëÇÏ±â À§ÇØ ÇÊ¿äÇÕ´Ï´Ù.
+using UnityEngine.InputSystem;
 
+/// <summary>
+/// VR ì»¨íŠ¸ë¡¤ëŸ¬ì˜ íŠ¸ë¦¬ê±°ì™€ ê·¸ë¦½ ìž…ë ¥ì— ë”°ë¼ ì† ëª¨ë¸ì˜ ì• ë‹ˆë©”ì´ì…˜ì„ ì œì–´í•˜ëŠ” ìŠ¤í¬ë¦½íŠ¸ìž…ë‹ˆë‹¤.
+/// ìœ ë‹ˆí‹°ì˜ ìƒˆë¡œìš´ Input Systemì„ ì‚¬ìš©í•©ë‹ˆë‹¤.
+/// </summary>
 public class ControllerHandsManager : MonoBehaviour
 {
-    // ÀÎ½ºÆåÅÍ¿¡¼­ Input Action Reference¸¦ ÇÒ´çÇÒ °ø°³ º¯¼öÀÔ´Ï´Ù.
-    // ÀÌ ÂüÁ¶µéÀº Input Action Asset¿¡ Á¤ÀÇµÈ Æ¯Á¤ ¾×¼Ç(¿¹: "Æ®¸®°Å ´©¸£±â")¿¡ ¿¬°áµË´Ï´Ù.
+    [Header("ìž…ë ¥ ì•¡ì…˜ ì„¤ì •")]
+    [Tooltip("íŠ¸ë¦¬ê±° ìž…ë ¥ì„ ë‹´ë‹¹í•˜ëŠ” Input Actionì— ëŒ€í•œ ì°¸ì¡°ìž…ë‹ˆë‹¤.")]
     public InputActionReference triggerActionReference;
+    [Tooltip("ê·¸ë¦½ ìž…ë ¥ì„ ë‹´ë‹¹í•˜ëŠ” Input Actionì— ëŒ€í•œ ì°¸ì¡°ìž…ë‹ˆë‹¤.")]
     public InputActionReference gripActionReference;
 
-    // ¼Õ ¸ðµ¨¿¡ ÀÖ´Â Animator ÄÄÆ÷³ÍÆ®ÀÇ ÂüÁ¶ÀÔ´Ï´Ù.
-    // ÀÌ Animator´Â ÀÔ·Â¿¡ µû¶ó ¼Õ ¾Ö´Ï¸ÞÀÌ¼ÇÀ» À§ÇÑ ºí·»µå Æ®¸® ¶Ç´Â »óÅÂ¸¦ Á¦¾îÇÕ´Ï´Ù.
+    [Header("ì• ë‹ˆë©”ì´ì…˜ ì„¤ì •")]
+    [Tooltip("ì† ëª¨ë¸ì˜ ì• ë‹ˆë©”ì´ì…˜ì„ ì œì–´í•˜ëŠ” Animator ì»´í¬ë„ŒíŠ¸ìž…ë‹ˆë‹¤.")]
     public Animator handAnimator;
 
     private void Awake()
     {
-        // ÀÌ ½ºÅ©¸³Æ®°¡ ºÙ¾î ÀÖ´Â GameObject¿¡ ÀÖ´Â Animator ÄÄÆ÷³ÍÆ®¸¦ °¡Á®¿É´Ï´Ù.
-        // ÀÏ¹ÝÀûÀ¸·Î ¼Õ ¸ðµ¨°ú Animator¸¦ Æ÷ÇÔÇÏ´Â GameObjectÀÔ´Ï´Ù.
+        // ì´ ìŠ¤í¬ë¦½íŠ¸ê°€ ë¶™ì–´ìžˆëŠ” ê²Œìž„ ì˜¤ë¸Œì íŠ¸ì—ì„œ Animator ì»´í¬ë„ŒíŠ¸ë¥¼ ìžë™ìœ¼ë¡œ ì°¾ì•„ì˜µë‹ˆë‹¤.
         handAnimator = GetComponent<Animator>();
 
-        // ÀÔ·Â ¾×¼Ç ±¸µ¶À» ¼³Á¤ÇÏ´Â ¸Þ¼­µå¸¦ È£ÃâÇÕ´Ï´Ù.
+        // ìž…ë ¥ ì•¡ì…˜ì— ëŒ€í•œ ì´ë²¤íŠ¸ êµ¬ë…ì„ ì„¤ì •í•©ë‹ˆë‹¤.
         SetupInputActions();
     }
 
     /// <summary>
-    /// Æ®¸®°Å ¹× ±×¸³ ÀÔ·Â ¾×¼Ç¿¡ ´ëÇÑ ¸®½º³Ê¸¦ ¼³Á¤ÇÕ´Ï´Ù.
-    /// ÀÌ ¾×¼ÇµéÀÌ ¼öÇàµÉ ¶§, ¼Õ ¾Ö´Ï¸ÞÀÌ¼ÇÀ» ¾÷µ¥ÀÌÆ®ÇÕ´Ï´Ù.
+    /// íŠ¸ë¦¬ê±°ì™€ ê·¸ë¦½ ìž…ë ¥ ì•¡ì…˜ì— ëŒ€í•œ ë¦¬ìŠ¤ë„ˆ(ì´ë²¤íŠ¸ í•¸ë“¤ëŸ¬)ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.
+    /// ì´ ì•¡ì…˜ë“¤ì´ ë°œìƒí•  ë•Œ, ì† ì• ë‹ˆë©”ì´ì…˜ì„ ì—…ë°ì´íŠ¸í•©ë‹ˆë‹¤.
     /// </summary>
     void SetupInputActions()
     {
-        // µÎ ÀÔ·Â ¾×¼Ç ÂüÁ¶°¡ ÀÎ½ºÆåÅÍ¿¡ ÇÒ´çµÇ¾ú´ÂÁö È®ÀÎÇÕ´Ï´Ù.
+        // ë‘ ìž…ë ¥ ì•¡ì…˜ì´ ì¸ìŠ¤íŽ™í„° ì°½ì— ì œëŒ€ë¡œ ì—°ê²°ë˜ì—ˆëŠ”ì§€ í™•ì¸í•©ë‹ˆë‹¤.
         if (triggerActionReference != null && gripActionReference != null)
         {
-            // Æ®¸®°Å ¾×¼ÇÀÇ 'performed' ÀÌº¥Æ®¿¡ ±¸µ¶ÇÕ´Ï´Ù.
-            // Æ®¸®°Å°¡ ´­¸®°Å³ª ÇØÁ¦µÉ ¶§ (¾×¼Ç ¼öÇà ½Ã), UpdateHandAnimationÀ» È£ÃâÇÕ´Ï´Ù.
-            // 'ctx.ReadValue<float>()'´Â ¾×¼ÇÀÇ ÇöÀç float °ª(¿¹: Æ®¸®°Å ´ç±è ½Ã 0¿¡¼­ 1)À» °¡Á®¿É´Ï´Ù.
-            // performed ÀÌº¥Æ®: ÀÌ·¯ÇÑ ÀÔ·Â ¾×¼ÇÀÌ ¿ÏÀüÈ÷ ¿Ï·áµÇ°Å³ª, Æ¯Á¤ ±âÁØÀ» ÃæÁ·ÇßÀ» ¶§ ÇÑ ¹ø ¹ß»ýÇÕ´Ï´Ù.
+            // --- íŠ¸ë¦¬ê±° ì•¡ì…˜ ì„¤ì • ---
+            // performed: ì•¡ì…˜ì´ ìˆ˜í–‰ë˜ì—ˆì„ ë•Œ (ë²„íŠ¼ì´ ëˆŒë ¸ì„ ë•Œ)
+            // ctx.ReadValue<float>()ëŠ” íŠ¸ë¦¬ê±°ë¥¼ ëˆ„ë¥¸ ì •ë„ë¥¼ 0.0ì—ì„œ 1.0 ì‚¬ì´ì˜ ê°’ìœ¼ë¡œ ì½ì–´ì˜µë‹ˆë‹¤.
             triggerActionReference.action.performed += ctx => UpdateHandAnimation("Trigger", ctx.ReadValue<float>());
-
-            // ±×¸³ ¾×¼ÇÀÇ 'performed' ÀÌº¥Æ®¿¡ ±¸µ¶ÇÕ´Ï´Ù.
-            // Æ®¸®°Å¿Í À¯»çÇÏ°Ô, "Grip" ¾Ö´Ï¸ÞÀÌ¼Ç ÆÄ¶ó¹ÌÅÍ¸¦ ¾÷µ¥ÀÌÆ®ÇÕ´Ï´Ù.
+            // canceled: ì•¡ì…˜ì´ ì·¨ì†Œë˜ì—ˆì„ ë•Œ (ë²„íŠ¼ì—ì„œ ì†ì„ ë—ì„ ë•Œ)
+            // ì†ì„ ë–¼ë©´ ì• ë‹ˆë©”ì´ì…˜ì„ ì›ëž˜ ìƒíƒœ(0)ë¡œ ë˜ëŒë¦½ë‹ˆë‹¤.
             triggerActionReference.action.canceled += ctx => UpdateHandAnimation("Trigger", 0);
             
-            // Áö¼ÓÀûÀÎ ¾×¼ÇÀÇ °æ¿ì, ÀÔ·ÂÀÌ ÇØÁ¦µÉ ¶§ °ªÀ» ¸í½ÃÀûÀ¸·Î Àç¼³Á¤ÇØ¾ß ÇÑ´Ù¸é
-            // 'canceled' ÀÌº¥Æ®¿¡µµ ±¸µ¶ÇÒ ¼ö ÀÖ½À´Ï´Ù.
+            // --- ê·¸ë¦½ ì•¡ì…˜ ì„¤ì • ---
+            // ê·¸ë¦½ ë²„íŠ¼ë„ íŠ¸ë¦¬ê±°ì™€ ë™ì¼í•œ ë°©ì‹ìœ¼ë¡œ ì„¤ì •í•©ë‹ˆë‹¤.
             gripActionReference.action.performed += ctx => UpdateHandAnimation("Grip", ctx.ReadValue<float>());
             gripActionReference.action.canceled += ctx => UpdateHandAnimation("Grip", 0);
         }
         else
         {
-            // ÀÔ·Â ¾×¼Ç ÂüÁ¶°¡ ¼³Á¤µÇÁö ¾Ê¾Ò´Ù¸é °æ°í¸¦ ±â·ÏÇÕ´Ï´Ù.
-            // ÀÌ·¸°Ô µÇ¸é ¼Õ ¾Ö´Ï¸ÞÀÌ¼ÇÀÌ ÀÛµ¿ÇÏÁö ¾Ê½À´Ï´Ù.
-            Debug.LogWarning("Input Action References are not set in the Inspector");
+            Debug.LogWarning("Input Action Referencesê°€ ì¸ìŠ¤íŽ™í„°ì— ì„¤ì •ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
         }
     }
 
     /// <summary>
-    /// ¼Õ AnimatorÀÇ float ÆÄ¶ó¹ÌÅÍ¸¦ ¾÷µ¥ÀÌÆ®ÇÕ´Ï´Ù.
+    /// Animatorì˜ float íŒŒë¼ë¯¸í„° ê°’ì„ ì—…ë°ì´íŠ¸í•˜ì—¬ ì† ì• ë‹ˆë©”ì´ì…˜ì„ ë³€ê²½í•©ë‹ˆë‹¤.
     /// </summary>
-    /// <param name="parameterName">AnimatorÀÇ float ÆÄ¶ó¹ÌÅÍ ÀÌ¸§ (¿¹: "Trigger", "Grip").</param>
-    /// <param name="value">ÆÄ¶ó¹ÌÅÍ¿¡ ¼³Á¤ÇÒ float °ª (¿¹: 0.0¿¡¼­ 1.0).</param>
+    /// <param name="parameterName">Animatorì˜ íŒŒë¼ë¯¸í„° ì´ë¦„ (ì˜ˆ: "Trigger", "Grip")</param>
+    /// <param name="value">ì„¤ì •í•  ê°’ (ë³´í†µ 0.0ì—ì„œ 1.0 ì‚¬ì´)</param>
     void UpdateHandAnimation(string parameterName, float value)
     {
-        // Animator ÄÄÆ÷³ÍÆ®°¡ À¯È¿ÇÑÁö È®ÀÎÇÑ ÈÄ ÆÄ¶ó¹ÌÅÍ¸¦ ¼³Á¤ÇÏ·Á°í ½ÃµµÇÕ´Ï´Ù.
         if (handAnimator != null)
         {
-            // AnimatorÀÇ float ÆÄ¶ó¹ÌÅÍ¸¦ ¼³Á¤ÇÕ´Ï´Ù.
-            // ÀÌ ÆÄ¶ó¹ÌÅÍ´Â ÀÏ¹ÝÀûÀ¸·Î Animator ControllerÀÇ ºí·»µå Æ®¸®ÀÇ ÀÏºÎ¿©¾ß ÇÕ´Ï´Ù.
-            // ÀÌ ºí·»µå Æ®¸®´Â ´Ù¾çÇÑ ¼Õ Æ÷Áî(¿¹: ¿­¸° ¼Õ, ºÎºÐÀûÀ¸·Î ´ÝÈù ¼Õ, ¿ÏÀüÈ÷ ´ÝÈù ¼Õ)¸¦ ºí·»µùÇÕ´Ï´Ù.
+            // Animatorì˜ float íŒŒë¼ë¯¸í„° ê°’ì„ ë³€ê²½í•©ë‹ˆë‹¤.
+            // ì´ íŒŒë¼ë¯¸í„°ëŠ” Animator Controllerì˜ ë¸”ë Œë“œ íŠ¸ë¦¬(Blend Tree)ì™€ ì—°ê²°ë˜ì–´
+            // ê°’ì— ë”°ë¼ ì†ê°€ë½ì„ íŽ´ê±°ë‚˜ ì£¼ë¨¹ì„ ì¥ëŠ” ë“±ì˜ ì• ë‹ˆë©”ì´ì…˜ì„ ë§Œë“­ë‹ˆë‹¤.
             handAnimator.SetFloat(parameterName, value);
         }
     }
 
-    // --- ÀÔ·Â ¾×¼Ç °ü¸®¸¦ À§ÇÑ »ý¸í ÁÖ±â ¸Þ¼­µå ---
-    // ¿À·ù¸¦ ¹æÁöÇÏ°í ¼º´ÉÀ» ÃÖÀûÈ­ÇÏ±â À§ÇØ ÀÔ·Â ¾×¼ÇÀ» ¿Ã¹Ù¸£°Ô È°¼ºÈ­ ¹× ºñÈ°¼ºÈ­ÇÏ´Â °ÍÀÌ Áß¿äÇÕ´Ï´Ù.
+    // --- ìž…ë ¥ ì•¡ì…˜ í™œì„±í™”/ë¹„í™œì„±í™” ---
+    // ìžì›ì„ ì ˆì•½í•˜ê³  ì„±ëŠ¥ì„ ìµœì í™”í•˜ê¸° ìœ„í•´, ì´ ì˜¤ë¸Œì íŠ¸ê°€ í™œì„±í™”ë  ë•Œë§Œ ìž…ë ¥ì„ ë°›ë„ë¡ í•©ë‹ˆë‹¤.
     private void OnEnable()
     {
-        // ÀÌ GameObject°¡ È°¼ºÈ­µÉ ¶§ ¾×¼ÇÀ» È°¼ºÈ­ÇÕ´Ï´Ù.
-        // ÀÌ·¸°Ô ÇÏ¸é ÀÔ·Â °¨Áö¸¦ ½ÃÀÛÇÕ´Ï´Ù.
-        /*
-        "?" ¿¬»êÀÚ´Â Null Á¶°ÇºÎ ¿¬»êÀÚÀÔ´Ï´Ù.
-        if (triggerActionReference != null)
-        {
-            triggerActionReference.action.Enable();
-        }
-        À§ ³»¿ëÀ» ÁÙ¿©¼­ ¾²¸é ¾Æ·¡¿Í °°½À´Ï´Ù.
-        */
+        // ì´ GameObjectê°€ í™œì„±í™”ë  ë•Œ ìž…ë ¥ ì•¡ì…˜ì„ í™œì„±í™”í•˜ì—¬ ìž…ë ¥ì„ ë°›ì„ ìˆ˜ ìžˆê²Œ í•©ë‹ˆë‹¤.
         triggerActionReference?.action.Enable();
         gripActionReference?.action.Enable();
     }
 
     private void OnDisable()
     {
-        // ÀÌ GameObject°¡ ºñÈ°¼ºÈ­µÇ°Å³ª ÆÄ±«µÉ ¶§ ¾×¼ÇÀ» ºñÈ°¼ºÈ­ÇÕ´Ï´Ù.
-        // ÀÌ·¸°Ô ÇÏ¸é ÀÔ·Â °¨Áö¸¦ ÁßÁöÇÏ°í ¸Þ¸ð¸® ´©¼ö¸¦ ¹æÁöÇÕ´Ï´Ù.
+        // ì´ GameObjectê°€ ë¹„í™œì„±í™”ë  ë•Œ ìž…ë ¥ ì•¡ì…˜ì„ ë¹„í™œì„±í™”í•˜ì—¬ ìžì›ì„ ì ˆì•½í•©ë‹ˆë‹¤.
         triggerActionReference?.action.Disable();
         gripActionReference?.action.Disable();
     }

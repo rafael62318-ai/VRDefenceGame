@@ -24,8 +24,6 @@ public class EnemyHealth : MonoBehaviour
 
     private Enemy enemy;
     private Coroutine slowCoroutine;
-    
-    // ▼▼▼ 추가된 부분 ▼▼▼
     private float baseSpeed; // 적의 '진짜' 원래 속도를 저장할 변수
 
     void Awake()
@@ -33,7 +31,6 @@ public class EnemyHealth : MonoBehaviour
         currentHP = maxHP;
         enemy = GetComponent<Enemy>();
 
-        // ▼▼▼ 추가된 부분 ▼▼▼
         // Awake에서 적의 원래 속도를 한번만 저장합니다.
         if (enemy != null)
         {
@@ -84,7 +81,7 @@ public class EnemyHealth : MonoBehaviour
     
     private IEnumerator SlowProcess(float slowFactor, float duration)
     {
-        // ▼▼▼ 수정된 부분 ▼▼▼
+    
         // 현재 속도가 아닌, 처음에 저장해둔 baseSpeed를 기준으로 속도를 감소시킵니다.
         enemy.moveSpeed = baseSpeed * (1 - slowFactor);
 
@@ -92,7 +89,7 @@ public class EnemyHealth : MonoBehaviour
 
         // 둔화가 끝나면 현재 속도가 아닌, 원래 속도(baseSpeed)로 되돌립니다.
         enemy.moveSpeed = baseSpeed;
-        // ▲▲▲ 수정된 부분 ▲▲▲
+     
         
         slowCoroutine = null;
     }

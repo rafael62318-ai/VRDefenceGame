@@ -1,43 +1,98 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class TurretUIController : MonoBehaviour
 {
-    [SerializeField] private UnitPlacer placer;        // 씬에 있는 UnitPlacer 연결
-    [SerializeField] private GameObject turretPrefab;  // 설치할 포탑 프리팹
-    private Upgradeable selectedTurret;                // 현재 선택된 포탑
+    [Header("필수 컴포넌트")]
+    [SerializeField] private UnitPlacer placer; // 터렛 설치 로직을 담당하는 컴포넌트
+    [SerializeField] private GameObject upgradePanel;
 
-    // 버튼: 포탑 설치
-    public void PlaceTurret()
+    [Header("VR 상호작용 설정")]
+    [Tooltip("터렛 설치/UI 조작에 사용할 VR 컨트롤러의 Ray Interactor")]
+    [SerializeField] private XRRayInteractor rayInteractor;
+
+    // 현재 선택되어 업그레이드/판매 등을 할 수 있는 터렛
+    private Upgradeable selectedTurret;
+    private GameObject turretPrefabToPlace;
+
+    void Start()
     {
-        if (placer != null && turretPrefab != null)
+        if (upgradePanel != null)
         {
-            bool placed = placer.TryPlaceAt(
-                turretPrefab,
-                Camera.main.transform.position,
-                Camera.main.transform.forward
-            );
-            Debug.Log(placed ? "포탑 설치 성공" : "설치 실패 (골드 부족 or 위치 불가)");
+            upgradePanel.SetActive(false);
         }
     }
 
-    // 포탑 선택
-    public void SelectTurret(Upgradeable turret)
+    public void PrepareToPlaceTurret(GameObject turretPrefab)
     {
-        selectedTurret = turret;
-        Debug.Log($"[TurretUI] 포탑 선택됨: {turret.gameObject.name}");
+        turretPrefabToPlace = turretPrefab;
+        Debug.Log($"{turretPrefab.name} 설치 준비 완료. 지면을 가리켜주세요.");
     }
 
-    // 버튼: 포탑 업그레이드
-    public void UpgradeTurret()
+    public void ClearPlacement()
     {
-        if (selectedTurret != null)
+        turretPrefabToPlace = null;
+    }
+
+    void Update()
+    {
+        if (turretPrefabToPlace != null && rayInteractor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
         {
-            bool upgraded = selectedTurret.TryUpgrade();
-            Debug.Log(upgraded ? "업그레이드 성공" : "업그레이드 실패 (골드 부족 or 최대 레벨)");
+            if (rayInteractor.xrController is ActionBasedController controller)
+            {
+                // 'Select' 액션(보통 트리거)이 '이번 프레임에 처음으로 눌렸는지' 확인합니다.
+                if (controller.selectAction.action.WasPressedThisFrame())
+                {
+                    PlaceTurret(hit.point);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// UI 버튼에 연결하여 특정 터렛의 설치를 시도하는 함수
+    /// </summary>
+    /// <param name="turretPrefab">설치할 터렛의 프리팹</param>
+    public void PlaceTurret(Vector3 position)
+    {
+        if (placer == null) return;
+        
+        bool placed = placer.TryPlaceAtPoint(turretPrefabToPlace, position);
+
+        if (placed)
+        {
+            Debug.Log($"{turretPrefabToPlace.name} 포탑 설치 성공");
+            ClearPlacement();
         }
         else
         {
-            Debug.Log("업그레이드할 포탑이 선택되지 않았습니다.");
+            Debug.Log("포탑 설치 실패 (골드 부족 or 설치 불가 위치)");
+        }
+    }
+
+    /// <summary>
+    /// 이미 설치된 터렛을 클릭했을 때 호출되는 함수
+    /// </summary>
+    public void SelectTurret(Upgradeable turret)
+    {
+        selectedTurret = turret;
+
+        if (upgradePanel != null)
+        {
+            upgradePanel.SetActive(true);
+        }
+    }
+
+    /// <summary>
+    /// 업그레이드 UI 버튼에 연결되는 함수
+    /// </summary>
+    public void UpgradeSelectedTurret()
+    {
+        if (selectedTurret != null)
+        {
+            selectedTurret.TryUpgrade();
         }
     }
 }

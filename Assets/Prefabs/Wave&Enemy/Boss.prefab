@@ -52,6 +52,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Boss
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 399a13b8fa950614fa8040f28c1defab, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -62,6 +66,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 399a13b8fa950614fa8040f28c1defab, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7003494495274279013}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 399a13b8fa950614fa8040f28c1defab, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -6274247803530964487}
   m_SourcePrefab: {fileID: 100100000, guid: 399a13b8fa950614fa8040f28c1defab, type: 3}
 --- !u!1 &5858404027813524869 stripped
 GameObject:
@@ -100,3 +107,26 @@ MonoBehaviour:
   dropGold: 4
   coinPrefab: {fileID: 0}
   goldTextPrefab: {fileID: 0}
+--- !u!136 &-6274247803530964487
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5858404027813524869}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}

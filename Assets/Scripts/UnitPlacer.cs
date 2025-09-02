@@ -12,19 +12,16 @@ public class UnitPlacer : MonoBehaviour
     /// <param name="rayOrigin">레이캐스트 시작 위치</param>
     /// <param name="rayDir">레이캐스트 방향</param>
     /// <returns>설치 성공 여부</returns>
-    public bool TryPlaceAt(GameObject turretPrefab, Vector3 rayOrigin, Vector3 rayDir)
+    public bool TryPlaceAtPoint(GameObject turretPrefab, Vector3 point)
     {
         // 1. 프리팹이 유효한지 확인
         if (turretPrefab == null) return false;
 
         // 2. 프리팹에서 비용 정보를 가져옴
         var costComponent = turretPrefab.GetComponent<PurchaseCost>();
-        if (costComponent == null)
-        {
-            Debug.LogError($"{turretPrefab.name} 프리팹에 TurretCost 컴포넌트가 없습니다!", turretPrefab);
-            return false;
-        }
+        if (costComponent == null) return false;
         int buildCost = costComponent.buildCost;
+        
 
         // 3. 비용을 지불할 수 있는지 확인
         if (ResourceManager.Instance == null || !ResourceManager.Instance.CanAfford(buildCost))
@@ -32,15 +29,12 @@ public class UnitPlacer : MonoBehaviour
             return false;
         }
             
-        // 4. 설치 가능한 위치인지 Raycast로 확인
-        if (Physics.Raycast(rayOrigin, rayDir, out var hit, maxPlaceDistance, placeableLayers))
-        {
-            // 5. 터렛 생성 및 비용 차감
-            Instantiate(turretPrefab, hit.point, Quaternion.identity);
-            ResourceManager.Instance.TrySpend(buildCost);
-            return true;
-        }
-
-        return false;
+        
+        // 5. 터렛 생성 및 비용 차감
+        Instantiate(turretPrefab, point, Quaternion.identity);
+        ResourceManager.Instance.TrySpend(buildCost);
+        return true;
     }
+
+
 }
