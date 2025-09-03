@@ -5,8 +5,9 @@ using System;
 [RequireComponent(typeof(Enemy))]
 public class EnemyHealth : MonoBehaviour
 {
-    [Header("체력 설정")]
-    [SerializeField] private int maxHP = 100;
+    private int maxHP;
+    private int defense;
+    private int dropGold = 4;
     private int currentHP;
 
     [Header("UI 설정")]
@@ -16,7 +17,6 @@ public class EnemyHealth : MonoBehaviour
     public float healthUiYOffset = 2f;
 
     [Header("골드 드롭")]
-    [SerializeField] private int dropGold = 4;
     [SerializeField] private GameObject coinPrefab;
     [SerializeField] private GameObject goldTextPrefab;
 
@@ -26,25 +26,31 @@ public class EnemyHealth : MonoBehaviour
     private Coroutine slowCoroutine;
     private float baseSpeed; // 적의 '진짜' 원래 속도를 저장할 변수
 
+    public void Initialize(int hp, int def)
+    {
+        maxHP = hp;
+        defense = def;
+        currentHP = maxHP;
+    }
+
     void Awake()
     {
-        currentHP = maxHP;
         enemy = GetComponent<Enemy>();
-
-        // Awake에서 적의 원래 속도를 한번만 저장합니다.
-        if (enemy != null)
-        {
-            baseSpeed = enemy.moveSpeed;
-        }
     }
 
     void Start()
     {
-        if (healthUiPrefab != null)
+        if (enemy != null)
         {
-            GameObject healthUiObject = Instantiate(healthUiPrefab, transform.position + new Vector3(0, healthUiYOffset, 0), Quaternion.identity, transform);
-            healthUiObject.GetComponent<EnemyHPUI>()?.Initialize(this);
+            baseSpeed = enemy.gameObject.GetComponent<Enemy>().MoveSpeed;
         }
+
+
+        if (healthUiPrefab != null)
+            {
+                GameObject healthUiObject = Instantiate(healthUiPrefab, transform.position + new Vector3(0, healthUiYOffset, 0), Quaternion.identity, transform);
+                healthUiObject.GetComponent<EnemyHPUI>()?.Initialize(this);
+            }
         
         OnHealthChanged?.Invoke(currentHP, maxHP);
     }
@@ -58,7 +64,10 @@ public class EnemyHealth : MonoBehaviour
     {
         if (currentHP <= 0) return;
 
-        currentHP -= dmg;
+        int finalDamage = Mathf.Max(1, dmg - defense);
+        currentHP -= finalDamage;
+        
+        Debug.Log($"{gameObject.name}이(가) 피해를 입었습니다. 현재 체력: {currentHP} / {maxHP}");
         
         OnHealthChanged?.Invoke(currentHP, maxHP);
 
@@ -83,12 +92,12 @@ public class EnemyHealth : MonoBehaviour
     {
     
         // 현재 속도가 아닌, 처음에 저장해둔 baseSpeed를 기준으로 속도를 감소시킵니다.
-        enemy.moveSpeed = baseSpeed * (1 - slowFactor);
+        enemy.MoveSpeed = baseSpeed * (1 - slowFactor);
 
         yield return new WaitForSeconds(duration);
 
         // 둔화가 끝나면 현재 속도가 아닌, 원래 속도(baseSpeed)로 되돌립니다.
-        enemy.moveSpeed = baseSpeed;
+        enemy.MoveSpeed = baseSpeed;
      
         
         slowCoroutine = null;
@@ -96,6 +105,7 @@ public class EnemyHealth : MonoBehaviour
     
     private void Die()
     {
+        Debug.Log(gameObject.name + "의 체력이 0이 되어 파괴됩니다.");
         if (ResourceManager.Instance != null && dropGold > 0)
             ResourceManager.Instance.AddGold(dropGold);
 

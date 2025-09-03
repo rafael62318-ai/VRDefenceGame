@@ -87,7 +87,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 444c2ddadc40d4e48859d45dea11aef3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  enemyType: 3
   waypoints: []
 --- !u!114 &7003494495274279013
 MonoBehaviour:
@@ -101,10 +101,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9071634762cecd74892ea48d4d021543, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 100
   healthUiPrefab: {fileID: 0}
   healthUiYOffset: 2
-  dropGold: 4
   coinPrefab: {fileID: 0}
   goldTextPrefab: {fileID: 0}
 --- !u!136 &-6274247803530964487

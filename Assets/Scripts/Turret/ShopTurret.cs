@@ -25,8 +25,14 @@ public class ShopTurret : MonoBehaviour
 
     void OnEnable()
     {
+        grabInteractable.selectEntered.AddListener(StartPlacing);
+    }
+
+    void OnDisable()
+    {
         grabInteractable.selectEntered.RemoveListener(StartPlacing);
     }
+
 
     private void StartPlacing(SelectEnterEventArgs args)
     {

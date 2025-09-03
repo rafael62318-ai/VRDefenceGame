@@ -178,13 +178,18 @@ public class TurretController : MonoBehaviour
     }
     
     void AimAtTarget(Transform t)
-    {
-        if (lookAtObj == null || t == null) return;
-        Vector3 direction = t.position - lookAtObj.position;
-        direction.y = 0;
-        Quaternion lookRotation = Quaternion.LookRotation(direction);
-        lookAtObj.rotation = Quaternion.Slerp(lookAtObj.rotation, lookRotation, Time.deltaTime * rotationSpeed);
-    }
+{
+    if (lookAtObj == null || t == null)
+        return;
+
+    Vector3 direction = lookAtObj.position - t.position;
+
+    direction.y = 0;
+
+    Quaternion lookRotation = Quaternion.LookRotation(direction);
+    
+    lookAtObj.rotation = Quaternion.Slerp(lookAtObj.rotation, lookRotation, Time.deltaTime * rotationSpeed);
+}
     
     void ReturnToHomeRotation()
     {

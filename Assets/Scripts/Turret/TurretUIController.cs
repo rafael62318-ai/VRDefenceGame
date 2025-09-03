@@ -34,29 +34,34 @@ public class TurretUIController : MonoBehaviour
 
     public void PrepareToPlaceTurret(GameObject turretPrefab)
     {
+        var costComponent = turretPrefab.GetComponent<PurchaseCost>();
         // 이전에 선택한 미리보기가 있다면 삭제
-        if (turretPreviewInstance != null)
-        {
-            Destroy(turretPreviewInstance);
-        }
 
-        turretPrefabToPlace = turretPrefab;
-        
-        // 미리보기 인스턴스 생성
-        turretPreviewInstance = Instantiate(turretPrefab);
-        
-        // 미리보기가 실제로 공격하지 못하도록 기능적인 스크립트들을 비활성화
-        if(turretPreviewInstance.GetComponent<TurretController>() != null)
-            turretPreviewInstance.GetComponent<TurretController>().enabled = false;
-        if(turretPreviewInstance.GetComponent<Collider>() != null)
-            turretPreviewInstance.GetComponent<Collider>().enabled = false;
-        
-        // 모든 렌더러를 찾아 반투명 머티리얼로 교체 (선택 사항이지만 추천)
-        if (previewMaterial != null)
+        if (costComponent != null && ResourceManager.Instance.CanAfford(costComponent.buildCost))
         {
-            foreach (var renderer in turretPreviewInstance.GetComponentsInChildren<Renderer>())
+            if (turretPreviewInstance != null)
             {
-                renderer.material = previewMaterial;
+                Destroy(turretPreviewInstance);
+            }
+
+            turretPrefabToPlace = turretPrefab;
+
+            // 미리보기 인스턴스 생성
+            turretPreviewInstance = Instantiate(turretPrefab);
+
+            // 미리보기가 실제로 공격하지 못하도록 기능적인 스크립트들을 비활성화
+            if (turretPreviewInstance.GetComponent<TurretController>() != null)
+                turretPreviewInstance.GetComponent<TurretController>().enabled = false;
+            if (turretPreviewInstance.GetComponent<Collider>() != null)
+                turretPreviewInstance.GetComponent<Collider>().enabled = false;
+
+            // 모든 렌더러를 찾아 반투명 머티리얼로 교체 (선택 사항이지만 추천)
+            if (previewMaterial != null)
+            {
+                foreach (var renderer in turretPreviewInstance.GetComponentsInChildren<Renderer>())
+                {
+                    renderer.material = previewMaterial;
+                }
             }
         }
 
