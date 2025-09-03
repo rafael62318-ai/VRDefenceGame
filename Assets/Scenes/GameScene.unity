@@ -1810,11 +1810,94 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -5711932375085987099, guid: e6d511c57674d0a42a98b19cf97b1532, type: 3}
+    - {fileID: 8849185558616012416, guid: e6d511c57674d0a42a98b19cf97b1532, type: 3}
+    - {fileID: 6332075425826949318, guid: e6d511c57674d0a42a98b19cf97b1532, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5064052914712454516, guid: e6d511c57674d0a42a98b19cf97b1532, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 918197472}
   m_SourcePrefab: {fileID: 100100000, guid: e6d511c57674d0a42a98b19cf97b1532, type: 3}
+--- !u!1 &918197471 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5064052914712454516, guid: e6d511c57674d0a42a98b19cf97b1532, type: 3}
+  m_PrefabInstance: {fileID: 918197470}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &918197472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918197471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a35f6cfbfba9b548aaa00d52cfe8a50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_InteractionManager: {fileID: 0}
+  m_Colliders: []
+  m_InteractionLayers:
+    m_Bits: 1
+  m_DistanceCalculationMode: 1
+  m_SelectMode: 0
+  m_FocusMode: 1
+  m_CustomReticle: {fileID: 0}
+  m_AllowGazeInteraction: 0
+  m_AllowGazeSelect: 0
+  m_OverrideGazeTimeToSelect: 0
+  m_GazeTimeToSelect: 0.5
+  m_OverrideTimeToAutoDeselectGaze: 0
+  m_TimeToAutoDeselectGaze: 3
+  m_AllowGazeAssistance: 0
+  m_FirstHoverEntered:
+    m_PersistentCalls:
+      m_Calls: []
+  m_LastHoverExited:
+    m_PersistentCalls:
+      m_Calls: []
+  m_HoverEntered:
+    m_PersistentCalls:
+      m_Calls: []
+  m_HoverExited:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FirstSelectEntered:
+    m_PersistentCalls:
+      m_Calls: []
+  m_LastSelectExited:
+    m_PersistentCalls:
+      m_Calls: []
+  m_SelectEntered:
+    m_PersistentCalls:
+      m_Calls: []
+  m_SelectExited:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FirstFocusEntered:
+    m_PersistentCalls:
+      m_Calls: []
+  m_LastFocusExited:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FocusEntered:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FocusExited:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Activated:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Deactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  m_StartingHoverFilters: []
+  m_StartingSelectFilters: []
+  m_StartingInteractionStrengthFilters: []
 --- !u!4 &948131223 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8853059085627149521, guid: 682a93311d2292344a066dbb74ee6206, type: 3}
@@ -4123,23 +4206,23 @@ PrefabInstance:
       propertyPath: m_Name
       value: Turret1
       objectReference: {fileID: 0}
-    - target: {fileID: 8466820153744034257, guid: e21df6f470146fd40b1fce76f044a0a6, type: 3}
+    - target: {fileID: 0}
       propertyPath: buildCost
       value: 8
       objectReference: {fileID: 0}
-    - target: {fileID: 8466820153744034257, guid: e21df6f470146fd40b1fce76f044a0a6, type: 3}
+    - target: {fileID: 0}
       propertyPath: upgradeCosts.Array.size
       value: 3
       objectReference: {fileID: 0}
-    - target: {fileID: 8466820153744034257, guid: e21df6f470146fd40b1fce76f044a0a6, type: 3}
+    - target: {fileID: 0}
       propertyPath: 'upgradeCosts.Array.data[0]'
       value: 18
       objectReference: {fileID: 0}
-    - target: {fileID: 8466820153744034257, guid: e21df6f470146fd40b1fce76f044a0a6, type: 3}
+    - target: {fileID: 0}
       propertyPath: 'upgradeCosts.Array.data[1]'
       value: 33
       objectReference: {fileID: 0}
-    - target: {fileID: 8466820153744034257, guid: e21df6f470146fd40b1fce76f044a0a6, type: 3}
+    - target: {fileID: 0}
       propertyPath: 'upgradeCosts.Array.data[2]'
       value: 53
       objectReference: {fileID: 0}
