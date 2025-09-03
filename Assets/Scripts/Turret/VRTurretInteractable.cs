@@ -19,7 +19,7 @@ public class VRTurretInteractable : MonoBehaviour
         upgradeable = GetComponent<Upgradeable>();
         
         // 씬에 있는 TurretUIController를 찾아 연결합니다.
-        turretUIController = FindObjectOfType<TurretUIController>();
+        turretUIController = FindFirstObjectByType<TurretUIController>();
     }
 
     void OnEnable()

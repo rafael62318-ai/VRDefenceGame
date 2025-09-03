@@ -356,6 +356,10 @@ GameObject:
   - component: {fileID: 4632330705030417213}
   - component: {fileID: -1713700750425847508}
   - component: {fileID: -1919582630795994757}
+  - component: {fileID: -1626635676011083016}
+  - component: {fileID: -8738773639755027618}
+  - component: {fileID: 8466820153744034257}
+  - component: {fileID: 6840588464163377197}
   m_Layer: 0
   m_Name: Turret1
   m_TagString: Untagged
@@ -552,3 +556,65 @@ MonoBehaviour:
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
   m_FarAttachMode: 0
+--- !u!114 &-1626635676011083016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7351957018225663698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf59629f729e07f4f8912515b3dc2b43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  turretType: 0
+  targetingType: 0
+  lookAtObj: {fileID: 0}
+  shootElement: {fileID: 0}
+  targetTag: Enemy
+  rotationSpeed: 5
+  projectilePrefab: {fileID: 0}
+  range: 10
+  fireRate: 1
+  damage: 10
+  abilityValue: 0
+  useTrigger: 0
+--- !u!114 &-8738773639755027618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7351957018225663698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b07d144cb014496468f13015893d97fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8466820153744034257
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7351957018225663698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9c268aa962c6594bb4d560b21348278, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildCost: 10
+  upgradeCosts: 
+--- !u!114 &6840588464163377197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7351957018225663698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f27e8e423c1af8e4fad3557c4153f8b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

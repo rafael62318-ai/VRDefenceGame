@@ -3,7 +3,7 @@ using UnityEngine;
 public class UnitPlacer : MonoBehaviour
 {
     [SerializeField] private LayerMask placeableLayers;
-    [SerializeField] private float maxPlaceDistance = 20f;
+   
 
     /// <summary>
     /// 지정된 위치에 터렛 설치를 시도합니다.
@@ -12,10 +12,10 @@ public class UnitPlacer : MonoBehaviour
     /// <param name="rayOrigin">레이캐스트 시작 위치</param>
     /// <param name="rayDir">레이캐스트 방향</param>
     /// <returns>설치 성공 여부</returns>
-    public bool TryPlaceAtPoint(GameObject turretPrefab, Vector3 point)
+    public bool TryPlaceOnSlot(GameObject turretPrefab, TurretSlot slot)
     {
         // 1. 프리팹이 유효한지 확인
-        if (turretPrefab == null) return false;
+        if (turretPrefab == null || slot == null || slot.isOccupied) return false;
 
         // 2. 프리팹에서 비용 정보를 가져옴
         var costComponent = turretPrefab.GetComponent<PurchaseCost>();
@@ -31,8 +31,9 @@ public class UnitPlacer : MonoBehaviour
             
         
         // 5. 터렛 생성 및 비용 차감
-        Instantiate(turretPrefab, point, Quaternion.identity);
+        Instantiate(turretPrefab, slot.transform.position, slot.transform.rotation); 
         ResourceManager.Instance.TrySpend(buildCost);
+        slot.PlaceTurret(); // 슬롯을 점유 상태로 만듭니다.
         return true;
     }
 
